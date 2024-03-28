@@ -377,7 +377,7 @@ class DiscreteDistribution(dict):
         "*** YOUR CODE HERE ***"
         sum = self.total()
         if sum != 0:
-            for key in self.keys:
+            for key in self.keys():
                 self[key] = self[key] / sum
         "*** END YOUR CODE HERE ***"
 
@@ -604,7 +604,8 @@ class ExactInference(InferenceModule):
         position is known.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        for position in self.allPositions:
+            self.beliefs[position] = self.beliefs[position] * self.getObservationProb(observation, gameState.getPacmanPosition(), position, self.getJailPosition())
         "*** END YOUR CODE HERE ***"
         self.beliefs.normalize()
     
