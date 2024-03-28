@@ -209,6 +209,7 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
         currentFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
         print(currentFactorsList)
         print(eliminationOrder)
+        print(queryVariables)
         # join and elim all factors by variable
         for var_to_elim in eliminationOrder:
             currentFactorsList, joinedFactor = joinFactorsByVariable(currentFactorsList, var_to_elim)
@@ -217,7 +218,10 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             if(len(joinedFactor.unconditionedVariables())!=1):
                 print("hello")
                 factor = eliminate(joinedFactor, var_to_elim)
+                print(factor.variableDomainsDict)
                 currentFactorsList.append(factor)
+                print("currentFa")
+                print(currentFactorsList)
     
 
         # currentFactorsList should contain the connected components of the graph now as factors, must join the connected components

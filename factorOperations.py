@@ -121,12 +121,7 @@ def joinFactors(factors: List[Factor]):
     for ele in set_to_remove:
         conditionedVariables.remove(ele)
 
-    # update variableDomainsDict for the new factor
-    for ele in unconditionedVariables:
-        tempvarDomainsDict[ele] = varDomainDictFull[ele]
-    for ele in conditionedVariables:
-        tempvarDomainsDict[ele] = varDomainDictFull[ele]
-    cpt = Factor(list(unconditionedVariables), list(conditionedVariables), tempvarDomainsDict)
+    cpt = Factor(list(unconditionedVariables), list(conditionedVariables), varDomainDictFull)
     for assign in cpt.getAllPossibleAssignmentDicts():
         cpt.setProbability(assign,1)
         for factor in factors:
@@ -185,7 +180,30 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        unconditioned_var = factor.unconditionedVariables()
+        unconditioned_var.remove(eliminationVariable)
+        dDist = factor.variableDomainsDict()
+        cpt = Factor(unconditioned_var, factor.conditionedVariables(), dDist)
+
+        def check_good(factor_assign, cpt_assign):
+            for key, value in cpt_assign.items():
+                if key not in factor_assign:
+                    return False
+                elif factor_assign[key] != value:
+                    return False
+            return True
+
+        print(factor)
+        print(eliminationVariable)
+        for cpt_assign in cpt.getAllPossibleAssignmentDicts():
+            prob = 0
+            for factor_assign in factor.getAllPossibleAssignmentDicts():
+                # if factor_assign contains exaclty the content of cpt_assign, good to go
+                if check_good(factor_assign, cpt_assign):
+                    prob = prob + factor.getProbability(factor_assign)
+            cpt.setProbability(cpt_assign,prob)
+        return cpt
+
         "*** END YOUR CODE HERE ***"
 
     return eliminate
