@@ -547,26 +547,26 @@ class InferenceModule:
         """
         Set the belief state to a uniform prior belief over all positions.
         """
-        raise NotImplementedError
+        return self.initializeUniformly(gameState)
 
     def observeUpdate(self, observation, gameState):
         """
         Update beliefs based on the given distance observation and gameState.
         """
-        raise NotImplementedError
+        return self.observeUpdate(observation, gameState)
 
     def elapseTime(self, gameState):
         """
         Predict beliefs for the next time step from a gameState.
         """
-        raise NotImplementedError
+        return self.elapseTime(gameState)
 
     def getBeliefDistribution(self):
         """
         Return the agent's current belief state, a distribution over ghost
         locations conditioned on all evidence so far.
         """
-        raise NotImplementedError
+        return self.getBeliefDistribution()
 
 
 class ExactInference(InferenceModule):
@@ -623,7 +623,15 @@ class ExactInference(InferenceModule):
         current position is known.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        predict_dist = DiscreteDistribution()
+        #iterate over the current belief distribution
+        for position in self.allPositions:
+            #generate a new position distribution then iterate over it
+            newPosDist = self.getPositionDistribution(gameState, position)
+            for newPos in newPosDist:
+                predict_dist[newPos] = (self.beliefs[position] * newPosDist[newPos]) + predict_dist[newPos]
+        self.beliefs = predict_dist
+        self.beliefs.normalize()
         "*** END YOUR CODE HERE ***"
 
     def getBeliefDistribution(self):
