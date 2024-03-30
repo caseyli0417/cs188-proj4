@@ -149,5 +149,34 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        uncaptruedPos = []
+        for posDistri in livingGhostPositionDistributions:
+            uncaptruedPos.append(posDistri.argMax())
+
+        # decide the closet ghost
+        ghost_pos = []
+        ghost_maze_dst = []
+        for ghost in uncaptruedPos:
+            dist = self.distancer.getDistance(ghost, pacmanPosition)
+            ghost_maze_dst.append(dist)
+            ghost_pos.append(ghost)
+        closet_ghost = min(ghost_maze_dst)
+        index = ghost_maze_dst.index(closet_ghost)
+        closet_ghost_pos = ghost_pos[index]
+
+        a = legal[0]
+        successorPosition = Actions.getSuccessor(pacmanPosition, a)
+        min_v = self.distancer.getDistance(closet_ghost_pos, successorPosition)
+        # decide which action 
+        for action in legal:
+            tempsuccessorPosition = Actions.getSuccessor(pacmanPosition, action)
+            temp_v = self.distancer.getDistance(closet_ghost_pos, tempsuccessorPosition)
+            if temp_v < min_v:
+                min_v = temp_v
+                a = action
+        return a
+
+
+            
+        print(uncaptruedPos)
         "*** END YOUR CODE HERE ***"
